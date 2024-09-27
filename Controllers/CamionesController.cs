@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Reflection.Metadata.Ecma335;
+using Transportes_API.Models;
 using Transportes_API.Services;
 
 namespace Transportes_API.Controllers
@@ -14,11 +15,11 @@ namespace Transportes_API.Controllers
     public class CamionesController : ControllerBase
     {//Variable para la interfaz y el contexto 
         private readonly ICamiones _service;
-        private readonly TransportContext _context;
+        private readonly TransportesContext _context;
 
         //constructor para incializar mi servicio y mi contexto
 
-        public CamionesController(ICamiones service, TransportContext context)
+        public CamionesController(ICamiones service, TransportesContext context)
         {
             this._service = service;
             this._context = context;
@@ -27,12 +28,22 @@ namespace Transportes_API.Controllers
         [HttpGet]
         [Route("getCamion/{id}")]//además de la ruta, etablezc un parámetro a llegar desde la ruta
 
-        public Camiones_DTO GetCamiones(int id)
+        public Camiones_DTO GetCamion(int id)
         {
             Camiones_DTO camion = new Camiones_DTO(); // creo el objeto del modelo original 
             camion = _service.GetCamionbyID(id); //lleno este objeto desde la lista
             return camion;
         }
+
+        [HttpGet]
+        [Route("getCamiones")]
+        public List<Camiones> GetCamiones()
+        {
+            List<Camiones> list_camion = new List<Camiones>(); // creo el objeto del modelo original 
+            list_camion = _service.GetCamiones(); //lleno este objeto desde la lista
+            return list_camion;
+        }
+
 
         //POST
         [HttpPost]
@@ -40,7 +51,7 @@ namespace Transportes_API.Controllers
         //los metodos IActionResult retornan na respuesta a las API en un formato preestablecido capaz de ser leido por cualquier cliente http por otro lado FromBody determina que el parámetro que se espera será tomado del propio cuerpo de la peticion POST
         public IActionResult InsertarCamion([FromBody] Camiones_DTO camion)
         {
-            string respuesta = _service.UpdateCamion(camion);
+            string respuesta = _service.InsertCamion(camion);
             return Ok(new { respuesta });//su retorno es un nuevo objeto de tipo OK
             //Siendo OK la respuesta a la peticion HTTP
         }
